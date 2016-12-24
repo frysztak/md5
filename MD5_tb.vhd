@@ -48,7 +48,8 @@ ARCHITECTURE behavior OF MD5_tb IS
          data_out : OUT  std_logic_vector(31 downto 0);
          req_data : OUT  std_logic;
          done : OUT  std_logic;
-         error : OUT  std_logic;
+         err:         out STD_LOGIC;
+         start:       in  STD_LOGIC;
          output_hash : IN  std_logic;
          clk : IN  std_logic;
          reset : IN  std_logic
@@ -58,6 +59,7 @@ ARCHITECTURE behavior OF MD5_tb IS
 
    --Inputs
    signal data_in : std_logic_vector(31 downto 0) := (others => '0');
+   signal start : std_logic := '0';
    signal output_hash : std_logic := '0';
    signal clk : std_logic := '0';
    signal reset : std_logic := '0';
@@ -66,7 +68,7 @@ ARCHITECTURE behavior OF MD5_tb IS
    signal data_out : std_logic_vector(31 downto 0);
    signal req_data : std_logic;
    signal done : std_logic;
-   signal error : std_logic;
+   signal err : std_logic;
 
    -- Clock period definitions
    constant clk_period : time := 5 ns;
@@ -92,7 +94,8 @@ ARCHITECTURE behavior OF MD5_tb IS
    signal message : msg_t := (X"24cda8da", X"aed64a2e", X"312f765a", X"b90c9791",
                               X"fd32d9d0", X"615206cb", X"5b0e5045", X"dbb5f6af",
                               X"f4310a8e", X"58468968", X"c3b8c9aa", X"24db1a8d",
-                              X"aec78000", X"00000000", X"90010000", X"00000000");
+                           -- X"aec78000", X"00000000", X"90010000", X"00000000");
+                              X"aec70000", X"00000000", X"00000000", X"00000000");
 
    --signal message : msg_t := (X"daa8cd24", X"2e4ad6ae", X"5a762f31", X"91970cb9",
    --                           X"d0d932fd", X"cb065261", X"45500e5b", X"aff6b5db",
@@ -108,7 +111,8 @@ BEGIN
           data_out => data_out,
           req_data => req_data,
           done => done,
-          error => error,
+          err => err,
+          start => start,
           output_hash => output_hash,
           clk => clk,
           reset => reset
@@ -130,18 +134,19 @@ BEGIN
        reset <= '1';
        wait for clk_period;
        reset <= '0';
-       message_length <= std_logic_vector(to_unsigned(50, message_length'length));
+       message_length <= std_logic_vector(to_unsigned(400, message_length'length));
+       start <= '1';
        wait for 0.4*clk_period;
        -- load input message length
        data_in <= message_length;
-       wait for clk_period;
+       wait for 2*clk_period;
        -- load input message
        for i in 0 to 15 loop
            data_in <= message(i);
            wait for clk_period;
        end loop;
 
-       wait for 150*clk_period;
+       wait for 140*clk_period;
 
        --A <= X"67452301";
        --B <= X"efcdab89";
