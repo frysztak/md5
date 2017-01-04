@@ -91,6 +91,7 @@ constant K: const_k := (X"d76aa478", X"e8c7b756", X"242070db", X"c1bdceee",
 signal M : uint512_t := (others => '0');
 signal message_length : uint32_t := (others => '0');
 signal data_counter : natural := 0;
+signal out_counter  : natural := 0;
 signal loop_counter, loop_counter_n : natural := 0;
 
 constant a0 : uint32_t := X"67452301";
@@ -116,7 +117,8 @@ type state_t is (idle,
                  stage4_F, stage4_B,
                  stage5, -- add a0 to A, b0 to B etc.
                  stage6, -- swap endianness
-                 finished);
+                 finished,
+                 store_data);
 signal state, state_n : state_t;
 
 function leftrotate(x: in uint32_t; c: in uint8_t) return uint32_t is
@@ -148,7 +150,7 @@ begin
         end if;
     end process main;
 
-    fsm: process(state, start, loop_counter, data_counter)
+    fsm: process(state, start, loop_counter, data_counter, out_counter)
     begin
         state_n <= state;
 
@@ -217,6 +219,16 @@ begin
 
             when stage6 =>
                 state_n <= finished;
+
+            when finished =>
+                if (start = '1') then
+                    state_n <= store_data;
+                end if;
+
+            when store_data =>
+                if (out_counter = 4) then
+                    state_n <= idle;
+                end if;
 
             when others => null;
         end case;
@@ -287,6 +299,17 @@ begin
 
                 when finished =>
                     done <= '1';
+
+                when store_data =>
+                    case out_counter is
+                        when 0 => data_out <= std_logic_vector(A);
+                        when 1 => data_out <= std_logic_vector(B);
+                        when 2 => data_out <= std_logic_vector(C);
+                        when 3 => data_out <= std_logic_vector(D);
+                        when others => null;
+                    end case;
+                    out_counter <= out_counter + 1;
+                    done <= '0';
 
                 when others => null;
             end case;

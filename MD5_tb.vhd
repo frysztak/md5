@@ -94,7 +94,6 @@ ARCHITECTURE behavior OF MD5_tb IS
    signal message : msg_t := (X"24cda8da", X"aed64a2e", X"312f765a", X"b90c9791",
                               X"fd32d9d0", X"615206cb", X"5b0e5045", X"dbb5f6af",
                               X"f4310a8e", X"58468968", X"c3b8c9aa", X"24db1a8d",
-                           -- X"aec78000", X"00000000", X"90010000", X"00000000");
                               X"aec70000", X"00000000", X"00000000", X"00000000");
 
    --signal message : msg_t := (X"daa8cd24", X"2e4ad6ae", X"5a762f31", X"91970cb9",
@@ -103,6 +102,7 @@ ARCHITECTURE behavior OF MD5_tb IS
    --                           X"0080c7ae", X"00000000", X"00000190", X"00000000");
 
     signal message_length : std_logic_vector(31 downto 0) := (others => '0');
+    signal hash : std_logic_vector(0 to 127) := (others => '0');
 BEGIN
  
 	-- Instantiate the Unit Under Test (UUT)
@@ -126,7 +126,6 @@ BEGIN
 		clk <= '1';
 		wait for clk_period/2;
    end process;
- 
 
    -- Stimulus process
    stim_proc: process
@@ -140,24 +139,28 @@ BEGIN
        -- load input message length
        data_in <= message_length;
        wait for 2*clk_period;
+       start <= '0';
        -- load input message
        for i in 0 to 15 loop
            data_in <= message(i);
            wait for clk_period;
        end loop;
 
+       -- calculate MD5 hash
        wait for 140*clk_period;
+       start <= '1';
+       wait for clk_period;
+       start <= '0';
+       wait for clk_period;
+       -- store hash
+       for i in 0 to 3 loop
+           hash(32*i to 32*i+31) <= data_out;
+           wait for clk_period;
+       end loop;
+       -- done
+       wait for 10*clk_period;
 
-       --A <= X"67452301";
-       --B <= X"efcdab89";
-       --C <= X"98badcfe";
-       --D <= X"10325476";
-       --s <= X"07";
-       --wait for clk_period;
-       --tmp <= A + leftrotate(A + B + C + D, s);
-       --wait for 6*clk_period;
-
-       assert false severity failure;
+      assert false severity failure;
    end process;
 
 END;
