@@ -50,7 +50,6 @@ ARCHITECTURE behavior OF MD5_tb IS
          done : OUT  std_logic;
          err:         out STD_LOGIC;
          start:       in  STD_LOGIC;
-         output_hash : IN  std_logic;
          clk : IN  std_logic;
          reset : IN  std_logic
         );
@@ -60,7 +59,6 @@ ARCHITECTURE behavior OF MD5_tb IS
    --Inputs
    signal data_in : std_logic_vector(31 downto 0) := (others => '0');
    signal start : std_logic := '0';
-   signal output_hash : std_logic := '0';
    signal clk : std_logic := '0';
    signal reset : std_logic := '0';
 
@@ -113,7 +111,6 @@ BEGIN
           done => done,
           err => err,
           start => start,
-          output_hash => output_hash,
           clk => clk,
           reset => reset
         );

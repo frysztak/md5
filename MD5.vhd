@@ -37,7 +37,6 @@ entity MD5 is
            done:        out STD_LOGIC := '0';
            err:         out STD_LOGIC := '0';
            start:       in  STD_LOGIC;
-           output_hash: in  STD_LOGIC;
            clk:         in  STD_LOGIC;
            reset:       in  STD_LOGIC);
 end MD5;
