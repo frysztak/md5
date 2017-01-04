@@ -1,0 +1,42 @@
+digraph md5_fsm {
+    graph [ dpi = 128 ];
+    node [ shape = oval, height=0.6 ];
+    node [ fontname = "Ubuntu Light", fontsize=10 ];
+    edge [ fontname = "Ubuntu Light", fontsize=10 ];
+
+    idle -> idle;
+    idle -> load_length [ label = "start == 1" ];
+
+    load_length -> load_data;
+    
+    load_data -> load_data;
+    load_data -> pad [ label = "data_counter >= message_length" ];
+
+    pad -> rotate;
+    rotate -> stage1_F;
+
+    stage1_F -> stage1_B;
+    stage1_B -> stage1_F;
+    stage1_B -> stage2_F [ label = "loop_counter == 15" ];
+
+    stage2_F -> stage2_B;
+    stage2_B -> stage2_F;
+    stage2_B -> stage3_F [ label = "loop_counter == 31" ];
+
+    stage3_F -> stage3_B;
+    stage3_B -> stage3_F;
+    stage3_B -> stage4_F [ label = "loop_counter == 47" ];
+
+    stage4_F -> stage4_B;
+    stage4_B -> stage4_F;
+    stage4_B -> stage5  [ label = "loop_counter == 63" ];
+
+    stage5 -> stage6;
+    stage6 -> finished;
+
+    finished -> finished;
+    finished -> store_data [ label = "start == 1" ];
+
+    store_data -> store_data;
+    store_data -> idle [ label = "out_counter == 4" ];
+}
