@@ -33,7 +33,6 @@ use IEEE.NUMERIC_STD.ALL;
 entity MD5 is
     Port ( data_in:     in  STD_LOGIC_VECTOR (31 downto 0);
            data_out:    out STD_LOGIC_VECTOR (31 downto 0) := (others => '0');
-           req_data:    out STD_LOGIC := '0';
            done:        out STD_LOGIC := '0';
            err:         out STD_LOGIC := '0';
            start:       in  STD_LOGIC;
@@ -243,9 +242,7 @@ begin
 
                 when load_data =>
                     M(data_counter to data_counter+31) <= unsigned(data_in);
-                    if (data_counter >= message_length) then
-                        req_data <= '0';
-                    else
+                    if (data_counter < message_length) then
                         data_counter <= data_counter + 32;
                     end if;
 

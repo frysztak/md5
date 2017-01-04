@@ -46,7 +46,6 @@ ARCHITECTURE behavior OF MD5_tb IS
     PORT(
          data_in : IN  std_logic_vector(31 downto 0);
          data_out : OUT  std_logic_vector(31 downto 0);
-         req_data : OUT  std_logic;
          done : OUT  std_logic;
          err:         out STD_LOGIC;
          start:       in  STD_LOGIC;
@@ -64,7 +63,6 @@ ARCHITECTURE behavior OF MD5_tb IS
 
  	--Outputs
    signal data_out : std_logic_vector(31 downto 0);
-   signal req_data : std_logic;
    signal done : std_logic;
    signal err : std_logic;
 
@@ -107,7 +105,6 @@ BEGIN
    uut: MD5 PORT MAP (
           data_in => data_in,
           data_out => data_out,
-          req_data => req_data,
           done => done,
           err => err,
           start => start,
