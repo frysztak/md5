@@ -149,7 +149,7 @@ begin
         end if;
     end process main;
 
-    fsm: process(state, start, loop_counter, data_counter, out_counter)
+    fsm: process(state, start, loop_counter, data_counter, out_counter, message_length)
     begin
         state_n <= state;
 
