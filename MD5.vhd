@@ -234,7 +234,6 @@ begin
     end process fsm;
 
     calc: process(reset, clk, state, data_counter, loop_counter)
-        variable tmp : uint32_t;
     begin
         if (reset = '0' and clk'event and clk = '1') then
 
